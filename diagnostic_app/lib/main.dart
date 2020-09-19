@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:audio_recorder/audio_recorder.dart';
+import 'package:path/path.dart' as p;
+import 'package:file/file.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   runApp(MyApp());
@@ -52,6 +56,32 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+
+  Future<void> _record() async {
+    if (await Permission.microphone.request().isGranted) {
+      print("Permission granted");
+      // bool isRecording = await AudioRecorder.isRecording;
+      // await AudioRecorder.start(
+      //     path: "/file", audioOutputFormat: AudioOutputFormat.AAC);
+    }
+
+    // if (permission) {
+    //   // The OS restricts access, for example because of parental controls.
+    //   Permission.microphone.request();
+    //   permission = await Permission.microphone.isRestricted;
+    //   print(permission);
+    // }
+    // bool hasPermissions = await AudioRecorder.hasPermissions;
+    // print("Bool: "+hasPermissions.toString());
+
+  }
+
+  Future<void> _stop() async {
+    Recording recording = await AudioRecorder.stop();
+    print(
+        "Path : ${recording.path},  Format : ${recording.audioOutputFormat},  Duration : ${recording.duration},  Extension : ${recording.extension},");
+  }
+
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -60,6 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      print('Current path style: ${p.style}');
+      print('Current process path: ${p.current}');
     });
   }
 
@@ -99,6 +131,16 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text(
               'You have pushed the button this many times:',
+            ),
+            new FlatButton(
+              onPressed: _record,
+              child: new Text("Start"),
+              color: Colors.green,
+            ),
+            new FlatButton(
+              onPressed: _stop,
+              child: new Text("Stop"),
+              color: Colors.red,
             ),
             Text(
               '$_counter',
